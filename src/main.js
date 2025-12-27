@@ -19,6 +19,7 @@ const previewSection = document.getElementById('previewSection');
 const splitsList = document.getElementById('splitsList');
 const stats = document.getElementById('stats');
 const downloadAllBtn = document.getElementById('downloadAllBtn');
+const downloadZipBtn = document.getElementById('downloadZipBtn');
 const errorMessage = document.getElementById('errorMessage');
 const baseFilenameInput = document.getElementById('baseFilename');
 
@@ -29,6 +30,7 @@ uploadArea.addEventListener('dragleave', handleDragLeave);
 uploadArea.addEventListener('drop', handleDrop);
 fileInput.addEventListener('change', handleFileSelect);
 downloadAllBtn.addEventListener('click', downloadAll);
+downloadZipBtn.addEventListener('click', downloadAllAsZip);
 baseFilenameInput.addEventListener('change', handleFilenameChange);
 
 /**
@@ -123,7 +125,7 @@ function displayPreview() {
   splitsList.innerHTML = '';
 
   // Display each split
-  detectedSplits.forEach((split, index) => {
+  detectedSplits.forEach(async (split, index) => {
     const splitItem = document.createElement('div');
     splitItem.className = 'split-item';
 
@@ -136,16 +138,23 @@ function displayPreview() {
 
     const isFirst = index === 0;
     const isLast = index === detectedSplits.length - 1;
+    const canSplit = pageCount > 1;
 
     splitItem.innerHTML = `
+      <div class="split-thumbnail" id="thumbnail-${index}">
+        <div style="padding: 4rem 2rem; text-align: center; color: #999;">Loading...</div>
+      </div>
       <div class="split-info">
-        <div class="split-instrument">
+        <div class="split-header">
           <input
             type="text"
             value="${split.instrument}"
             data-split-index="${index}"
             placeholder="Instrument name"
           />
+          <button class="btn-small btn-secondary btn-download-single" onclick="window.downloadSingle(${index})" title="Download this part">
+            Download
+          </button>
         </div>
         <div class="split-pages">${pageRange} (${pageCount} ${pageLabel})</div>
       </div>
@@ -166,13 +175,21 @@ function displayPreview() {
         >
           ↓ Merge Down
         </button>
-        <button class="btn-small btn-secondary" onclick="window.downloadSingle(${index})">
-          Download
+        <button
+          class="btn-small btn-split"
+          onclick="window.splitPages(${index})"
+          ${!canSplit ? 'disabled' : ''}
+          title="Split into individual pages"
+        >
+          ✂ Split Pages
         </button>
       </div>
     `;
 
     splitsList.appendChild(splitItem);
+
+    // Generate thumbnail asynchronously
+    generateThumbnail(split, index);
   });
 
   // Add event listeners for input changes
@@ -180,6 +197,45 @@ function displayPreview() {
   inputs.forEach(input => {
     input.addEventListener('change', handleInstrumentNameChange);
   });
+}
+
+/**
+ * Generate thumbnail for a split
+ */
+async function generateThumbnail(split, index) {
+  try {
+    const page = await currentPDF.getPage(split.startPage);
+    const viewport = page.getViewport({ scale: 1.0 });
+
+    // Calculate scale to fit width - use larger size for wider layouts
+    // Target around 500px width for better quality on 3-column layout
+    const targetWidth = 500;
+    const scale = targetWidth / viewport.width;
+    const scaledViewport = page.getViewport({ scale });
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = scaledViewport.width;
+    canvas.height = scaledViewport.height;
+
+    await page.render({
+      canvasContext: context,
+      viewport: scaledViewport
+    }).promise;
+
+    // Replace loading text with canvas
+    const thumbnailDiv = document.getElementById(`thumbnail-${index}`);
+    if (thumbnailDiv) {
+      thumbnailDiv.innerHTML = '';
+      thumbnailDiv.appendChild(canvas);
+    }
+  } catch (error) {
+    console.error('Error generating thumbnail:', error);
+    const thumbnailDiv = document.getElementById(`thumbnail-${index}`);
+    if (thumbnailDiv) {
+      thumbnailDiv.innerHTML = '<div style="padding: 4rem 2rem; text-align: center; color: #999;">Error</div>';
+    }
+  }
 }
 
 /**
@@ -306,6 +362,35 @@ window.mergeWithNext = async function(index) {
 };
 
 /**
+ * Split a multi-page split into individual page splits
+ */
+window.splitPages = async function(index) {
+  const split = detectedSplits[index];
+
+  if (split.pages.length <= 1) return;
+
+  // Create individual splits for each page
+  const newSplits = split.pages.map(pageNum => ({
+    instrument: split.instrument,
+    startPage: pageNum,
+    endPage: pageNum,
+    pages: [pageNum]
+  }));
+
+  // Remove the original split and insert new ones
+  detectedSplits.splice(index, 1, ...newSplits);
+  generatedPDFs.splice(index, 1);
+
+  // Generate PDFs for each new split
+  for (let i = 0; i < newSplits.length; i++) {
+    await regeneratePDFForSplit(index + i);
+  }
+
+  // Refresh display
+  displayPreview();
+};
+
+/**
  * Download a single split PDF
  */
 window.downloadSingle = function(index) {
@@ -321,6 +406,40 @@ async function downloadAll() {
     downloadFile(pdf.blob, pdf.filename);
     // Small delay to avoid browser blocking multiple downloads
     await new Promise(resolve => setTimeout(resolve, 100));
+  }
+}
+
+/**
+ * Download all split PDFs as a ZIP file
+ */
+async function downloadAllAsZip() {
+  try {
+    // Dynamically import JSZip
+    const JSZip = (await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm')).default;
+
+    const zip = new JSZip();
+
+    // Get current base filename from input
+    const baseFilename = baseFilenameInput.value.trim() || currentFile.name.replace(/\.pdf$/i, '');
+
+    // Add each PDF to the zip with current instrument names
+    for (let i = 0; i < generatedPDFs.length; i++) {
+      const pdf = generatedPDFs[i];
+      const split = detectedSplits[i];
+
+      // Generate filename with current instrument name (from input field)
+      const filename = generateFilename(baseFilename, split.instrument);
+      zip.file(filename, pdf.blob);
+    }
+
+    // Generate the zip file
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+    // Download the zip
+    downloadFile(zipBlob, `${baseFilename}-all-parts.zip`);
+  } catch (error) {
+    console.error('Error creating ZIP:', error);
+    showError('Failed to create ZIP file: ' + error.message);
   }
 }
 
