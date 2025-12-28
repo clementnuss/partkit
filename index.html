@@ -14,7 +14,7 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       padding: 2rem;
-      max-width: 1800px;
+      max-width: 1200px;
       margin: 0 auto;
       background: #f5f5f5;
     }
@@ -37,319 +37,55 @@
       font-size: 0.9rem;
     }
 
-    .upload-section {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-
-    .upload-area {
-      border: 2px dashed #ccc;
-      border-radius: 8px;
-      padding: 3rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .upload-area:hover {
-      border-color: #4CAF50;
-      background: #f9f9f9;
-    }
-
-    .upload-area.dragover {
-      border-color: #4CAF50;
-      background: #e8f5e9;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-    .upload-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    button {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: #45a049;
-    }
-
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    .processing {
-      text-align: center;
-      padding: 2rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-      display: none;
-    }
-
-    .processing.active {
-      display: block;
-    }
-
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #4CAF50;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .preview-section {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      display: none;
-    }
-
-    .preview-section.active {
-      display: block;
-    }
-
-    #splitsList {
+    .tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
     }
 
-    @media (min-width: 1400px) {
-      #splitsList {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (max-width: 768px) {
-      #splitsList {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .split-item {
-      border: 1px solid #ddd;
+    .tool-card {
+      background: white;
+      padding: 2rem;
       border-radius: 8px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .split-thumbnail {
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      overflow: hidden;
-      background: white;
+    .tool-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
 
-    .split-thumbnail canvas {
-      width: 100%;
-      height: auto;
-      display: block;
+    .tool-card h2 {
+      color: #4CAF50;
+      margin-bottom: 0.75rem;
+      font-size: 1.5rem;
     }
 
-    .split-info {
-      flex: 1;
-    }
-
-    .split-actions {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .split-instrument {
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: #333;
-      margin-bottom: 0.25rem;
-    }
-
-    .split-header {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    input[type="text"][data-split-index] {
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
-
-    .split-instrument input {
-      font-weight: bold;
-      font-size: 1.1rem;
-      padding: 0.25rem 0.5rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      flex: 1;
-    }
-
-    .split-instrument input:focus {
-      outline: none;
-      border-color: #4CAF50;
-    }
-
-    .btn-download-single {
-      flex-shrink: 0;
-    }
-
-    .split-pages {
+    .tool-card p {
       color: #666;
-      font-size: 0.9rem;
-    }
-
-    .split-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .btn-small {
-      padding: 0.35rem 0.7rem;
-      font-size: 0.8rem;
-    }
-
-    .btn-secondary {
-      background: #2196F3;
-    }
-
-    .btn-secondary:hover {
-      background: #1976D2;
-    }
-
-    .btn-merge {
-      background: #FF9800;
-    }
-
-    .btn-merge:hover {
-      background: #F57C00;
-    }
-
-    .btn-merge:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    .btn-split {
-      background: #9C27B0;
-    }
-
-    .btn-split:hover {
-      background: #7B1FA2;
-    }
-
-    .btn-split:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    .download-all {
-      margin-top: 2rem;
-      text-align: center;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-    }
-
-    .stats {
-      background: #e3f2fd;
-      padding: 1rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
-      color: #1976D2;
-    }
-
-    .error {
-      background: #ffebee;
-      color: #c62828;
-      padding: 1rem;
-      border-radius: 4px;
-      margin-bottom: 1rem;
-      display: none;
-    }
-
-    .error.active {
-      display: block;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Music PDF Toolkit</h1>
-    <p class="subtitle">Split brass band sheet music PDFs by instrument</p>
+    <p class="subtitle">Tools for brass band musicians</p>
   </header>
 
-  <div class="upload-section">
-    <div class="upload-area" id="uploadArea">
-      <div class="upload-icon">📄</div>
-      <p><strong>Drop your PDF here</strong> or click to browse</p>
-      <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
-        Upload a PDF containing multiple instrument parts
-      </p>
-      <input type="file" id="fileInput" accept=".pdf">
-    </div>
+  <div class="tools-grid">
+    <a href="tools/pdf-splitter/" class="tool-card">
+      <h2>PDF Splitter</h2>
+      <p>Split brass band sheet music PDFs by instrument. Automatically detects instrument names and creates individual parts.</p>
+    </a>
+
+    <a href="tools/pdf-combiner/" class="tool-card">
+      <h2>PDF Page Combiner</h2>
+      <p>Combine 2 pages into 1 for A5 printing. Process multiple PDFs at once with flexible pairing options.</p>
+    </a>
   </div>
-
-  <div class="error" id="errorMessage"></div>
-
-  <div class="processing" id="processing">
-    <div class="spinner"></div>
-    <p>Processing PDF and detecting instruments...</p>
-  </div>
-
-  <div class="preview-section" id="previewSection">
-    <h2>Detected Splits</h2>
-    <div class="stats" id="stats"></div>
-
-    <div style="margin-bottom: 1.5rem;">
-      <label for="baseFilename" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
-        Base filename for splits:
-      </label>
-      <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
-        <input
-          type="text"
-          id="baseFilename"
-          placeholder="e.g., Better"
-          style="flex: 1; max-width: 400px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
-        />
-        <button id="downloadAllBtn">Download All PDFs</button>
-        <button id="downloadZipBtn">Download as ZIP</button>
-      </div>
-      <div style="font-size: 0.85rem; color: #666;">
-        Files will be named: [base]-[instrument].pdf
-      </div>
-    </div>
-
-    <div id="splitsList"></div>
-  </div>
-
-  <script type="module" src="/src/main.js"></script>
 </body>
 </html>

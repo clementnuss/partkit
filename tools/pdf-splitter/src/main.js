@@ -207,16 +207,21 @@ async function generateThumbnail(split, index) {
     const page = await currentPDF.getPage(split.startPage);
     const viewport = page.getViewport({ scale: 1.0 });
 
-    // Calculate scale to fit width - use larger size for wider layouts
-    // Target around 500px width for better quality on 3-column layout
-    const targetWidth = 500;
-    const scale = targetWidth / viewport.width;
+    // Calculate scale to fit width - use larger size for better quality
+    // Render at 3x resolution for sharp display and zoom
+    const displayWidth = 500;  // CSS display width
+    const devicePixelRatio = 3;
+    const scale = (displayWidth * devicePixelRatio) / viewport.width;
     const scaledViewport = page.getViewport({ scale });
 
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = scaledViewport.width;
     canvas.height = scaledViewport.height;
+
+    // Set CSS size to display at 1x
+    canvas.style.width = '100%';
+    canvas.style.height = 'auto';
 
     await page.render({
       canvasContext: context,
@@ -228,6 +233,36 @@ async function generateThumbnail(split, index) {
     if (thumbnailDiv) {
       thumbnailDiv.innerHTML = '';
       thumbnailDiv.appendChild(canvas);
+
+      // Add smart zoom origin adjustment
+      thumbnailDiv.addEventListener('mouseenter', function() {
+        const rect = canvas.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const scaledWidth = rect.width * 3;
+        const scaledHeight = rect.height * 3;
+        const leftEdge = rect.left - (scaledWidth - rect.width) / 2;
+        const rightEdge = rect.right + (scaledWidth - rect.width) / 2;
+        const topEdge = rect.top - (scaledHeight - rect.height) / 2;
+        const bottomEdge = rect.bottom + (scaledHeight - rect.height) / 2;
+
+        let xOrigin = 'center';
+        let yOrigin = 'center';
+
+        if (leftEdge < 0) {
+          xOrigin = 'left';
+        } else if (rightEdge > viewportWidth) {
+          xOrigin = 'right';
+        }
+
+        if (topEdge < 0) {
+          yOrigin = 'top';
+        } else if (bottomEdge > viewportHeight) {
+          yOrigin = 'bottom';
+        }
+
+        canvas.style.transformOrigin = `${xOrigin} ${yOrigin}`;
+      });
     }
   } catch (error) {
     console.error('Error generating thumbnail:', error);
@@ -249,7 +284,7 @@ function handleInstrumentNameChange(event) {
     // Update the split
     detectedSplits[index].instrument = newName;
 
-    // Regenerate the PDF with new name
+    // Regenerate the PDF with new name (no need to refresh display)
     regeneratePDFForSplit(index);
   }
 }
