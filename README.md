@@ -1,77 +1,91 @@
 # Music PDF Toolkit
 
-A browser-based toolkit for splitting brass band sheet music PDFs by instrument.
+A browser-based toolkit for processing brass band sheet music PDFs. All processing happens client-side - your PDFs never leave your device!
 
-## Features
+## 🚀 Live Demo
 
-- **Automatic instrument detection** - Identifies instrument names in PDF pages using text extraction and fuzzy matching
-- **Smart splitting** - Groups consecutive pages by instrument
-- **Preview before download** - Review detected splits and page ranges
-- **Browser-based** - No server required, runs entirely in your browser
-- **Privacy-focused** - Files never leave your computer
+**https://clementnuss.github.io/music-pdf-toolkit/**
 
-## How it works
+Or with custom domain: **https://music.n8r.ch** (if DNS configured)
 
-1. Upload a PDF containing multiple brass band parts
-2. The tool analyzes each page, looking for instrument names in the top-left corner
-3. Pages are grouped by instrument until a new instrument is detected
-4. Preview the detected splits with page ranges
-5. **Edit instrument names** if OCR detection was incorrect
-6. Download individual PDFs or all at once
+## 🛠️ Tools
 
-## Supported Instruments
+### PDF Splitter
+Automatically split brass band PDFs by instrument using OCR and text detection.
+- Auto-detects instrument names
+- OCR fallback for scanned PDFs
+- Edit instrument names
+- Merge/split pages
+- Download individually or as ZIP
 
-The tool recognizes standard brass band instruments including:
-- Cornets (Soprano, Solo, Repiano, 2nd, 3rd)
-- Horns (Solo Horn, Tenor Horn, 1st/2nd Horn)
-- Baritones
-- Trombones
-- Euphoniums
-- Basses (Eb, BBb, Tuba)
-- Percussion
-- And more...
+### PDF Combiner
+Combine 2 pages into 1 for A5 printing.
+- Process multiple PDFs at once
+- Optional margin cropping
+- First page alone mode
+- Batch download as ZIP
 
-## Getting Started
+### PDF Merger
+Merge common pages (lyrics, etc.) with all parts.
+- Two-step upload process
+- Adds common PDF to beginning of each part
+- Batch processing
 
-### Installation
+### PDF Assembler
+Combine all parts into one master PDF with configurable replicas.
+- Set number of copies per part (e.g., 2 euphoniums)
+- Drag-and-drop reordering
+- Smart filename detection
+- Total page count
+
+## 💻 Development
 
 ```bash
+# Install dependencies
 npm install
-```
 
-### Development
-
-```bash
+# Start dev server (http://localhost:3000)
 npm run dev
-```
 
-Opens the app at http://localhost:3000
-
-### Build
-
-```bash
+# Build for production
 npm run build
 ```
 
-Builds for production to the `dist/` folder.
+## 🚢 Deployment
 
-## Technology Stack
+This project uses GitHub Actions to automatically deploy to GitHub Pages on every push to `main`.
 
-- **PDF.js** - PDF parsing and text extraction
-- **pdf-lib** - PDF manipulation and generation
-- **Fuse.js** - Fuzzy string matching for instrument detection
+### Setup GitHub Pages
+
+1. Go to your repository **Settings**
+2. Navigate to **Pages** (under Code and automation)
+3. Under **Source**, select **"GitHub Actions"**
+4. Push to main branch - the site deploys automatically!
+
+### Custom Domain (Optional)
+
+To use a custom domain like `music.n8r.ch`:
+
+1. In repository settings → Pages → Custom domain: `music.n8r.ch`
+2. In your DNS provider, add a CNAME record:
+   ```
+   music.n8r.ch  →  clementnuss.github.io
+   ```
+3. Wait for DNS propagation (5-30 minutes)
+4. GitHub automatically provisions SSL certificate ✨
+
+## 🔧 Tech Stack
+
 - **Vite** - Build tool and dev server
+- **PDF.js** - PDF rendering and text extraction
+- **pdf-lib** - PDF manipulation
+- **Tesseract.js** - Browser-based OCR
+- **JSZip** - ZIP file creation
+- **Fuse.js** - Fuzzy string matching
 
-## Future Enhancements
+## 🔒 Privacy
 
-- [ ] OCR fallback for scanned PDFs (Tesseract.js)
-- [x] Manual instrument name editing
-- [ ] Manual split editing (adjust page ranges, merge/split sections)
-- [ ] Page thumbnails in preview
-- [ ] Batch processing multiple PDFs
-- [ ] Custom instrument lists
-- [ ] Save/load split configurations
-- [ ] Export all as ZIP file
+All PDF processing happens **entirely in your browser** using WebAssembly and JavaScript. No data is sent to any server. Your PDFs stay on your device!
 
 ## License
 
