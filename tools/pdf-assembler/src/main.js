@@ -3,6 +3,7 @@
  */
 
 import { PDFDocument } from 'pdf-lib';
+import { t } from '../../../i18n.js';
 
 // State
 let uploadedPDFs = []; // [{name, pdfDoc, pageCount, replicas}]
@@ -203,7 +204,7 @@ function displayPreview() {
         <div class="pdf-pages">(${pdf.pageCount} page${pdf.pageCount > 1 ? 's' : ''})</div>
       </div>
       <div class="replica-control">
-        <label>Copies:</label>
+        <label>${t('assembler.copies')}</label>
         <div class="replica-buttons">
           <button class="replica-button" onclick="window.decrementReplicas(${index})" ${pdf.replicas === 0 ? 'disabled' : ''}>−</button>
           <div class="replica-count" id="count-${index}" onclick="window.editReplicas(${index})">${pdf.replicas}</div>
@@ -309,7 +310,8 @@ function updateTotalPages() {
     return sum + (pdf.pageCount * pdf.replicas);
   }, 0);
 
-  totalPages.textContent = `Total: ${total} page${total !== 1 ? 's' : ''}`;
+  const pageLabel = total !== 1 ? t('assembler.pages') : t('assembler.page');
+  totalPages.textContent = `${t('assembler.total')} ${total} ${pageLabel}`;
 }
 
 /**

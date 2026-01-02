@@ -330,16 +330,16 @@
 </head>
 <body>
   <header>
-    <a href="../../index.html" class="back-button">← Back to Home</a>
-    <h1>PartKit</h1>
-    <p class="subtitle">Split brass band sheet music PDFs by instrument</p>
+    <a href="../../index.html" class="back-button" data-i18n="common.back">← Back to Home</a>
+    <h1 data-i18n="main.title">PartKit</h1>
+    <p class="subtitle" data-i18n="main.subtitle">Split brass band sheet music PDFs by instrument</p>
   </header>
 
   <div class="upload-section">
     <div class="upload-area" id="uploadArea">
       <div class="upload-icon">📄</div>
-      <p><strong>Drop your PDF here</strong> or click to browse</p>
-      <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+      <p><strong data-i18n="splitter.upload.title">Drop your PDF here</strong> <span data-i18n="splitter.upload.browse">or click to browse</span></p>
+      <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;" data-i18n="splitter.upload.subtitle">
         Upload a PDF containing multiple instrument parts
       </p>
       <input type="file" id="fileInput" accept=".pdf">
@@ -350,15 +350,15 @@
 
   <div class="processing" id="processing">
     <div class="spinner"></div>
-    <p>Processing PDF and detecting instruments...</p>
+    <p data-i18n="splitter.processing">Processing PDF and detecting instruments...</p>
   </div>
 
   <div class="preview-section" id="previewSection">
-    <h2>Detected Splits</h2>
+    <h2 data-i18n="splitter.detected.title">Detected Splits</h2>
     <div class="stats" id="stats"></div>
 
     <div style="margin-bottom: 1.5rem;">
-      <label for="baseFilename" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+      <label for="baseFilename" style="display: block; margin-bottom: 0.5rem; font-weight: bold;" data-i18n="splitter.filename.label">
         Base filename for splits:
       </label>
       <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
@@ -366,10 +366,11 @@
           type="text"
           id="baseFilename"
           placeholder="e.g., Better"
+          data-i18n="splitter.filename.placeholder"
           style="flex: 1; max-width: 400px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
         />
-        <button id="downloadAllBtn">Download All PDFs</button>
-        <button id="downloadZipBtn">Download as ZIP</button>
+        <button id="downloadAllBtn" data-i18n="splitter.download.all">Download All PDFs</button>
+        <button id="downloadZipBtn" data-i18n="splitter.download.zip">Download as ZIP</button>
       </div>
       <div style="font-size: 0.85rem; color: #666;">
         Files will be named: [base]-[instrument].pdf
@@ -379,6 +380,10 @@
     <div id="splitsList"></div>
   </div>
 
+  <script type="module">
+    import { initI18n } from '../../i18n.js';
+    initI18n();
+  </script>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

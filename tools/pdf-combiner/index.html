@@ -337,16 +337,16 @@
 </head>
 <body>
   <header>
-    <a href="../../index.html" class="back-button">← Back to Home</a>
-    <h1>PDF Page Combiner</h1>
-    <p class="subtitle">Combine 2 pages into 1 for A5 printing with optional margin cropping</p>
+    <a href="../../index.html" class="back-button" data-i18n="common.back">← Back to Home</a>
+    <h1 data-i18n="tool.combiner.name">PDF Page Combiner</h1>
+    <p class="subtitle" data-i18n="tool.combiner.desc">Combine 2 pages into 1 for A5 printing with optional margin cropping</p>
   </header>
 
   <div class="upload-section">
     <div class="upload-area" id="uploadArea">
       <div class="upload-icon">📑</div>
-      <p><strong>Drop PDF files or ZIP here</strong> or click to browse</p>
-      <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+      <p><strong data-i18n="combiner.upload.title">Drop PDF files or ZIP here</strong> <span data-i18n="combiner.upload.browse">or click to browse</span></p>
+      <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;" data-i18n="combiner.upload.subtitle">
         Upload multiple PDF files or a ZIP containing PDFs
       </p>
       <input type="file" id="fileInput" accept=".pdf,.zip" multiple>
@@ -357,7 +357,7 @@
 
   <div class="processing" id="processing">
     <div class="spinner"></div>
-    <p>Processing PDFs...</p>
+    <p data-i18n="common.processing">Processing PDFs...</p>
   </div>
 
   <div class="preview-section" id="previewSection">
@@ -367,9 +367,10 @@
       <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
         <label class="checkbox-label">
           <input type="checkbox" id="globalCropMargins" onchange="window.toggleGlobalCropMargins()">
-          Crop margins
+          <span data-i18n="combiner.crop.enable">Crop margins</span>
         </label>
         <div class="crop-input">
+          <label data-i18n="combiner.crop.percent">Crop percentage:</label>
           <input
             type="number"
             id="globalCropPercent"
@@ -383,7 +384,7 @@
           <span>%</span>
         </div>
         <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <label for="zipFilename" style="font-size: 0.9rem;">ZIP filename:</label>
+          <label for="zipFilename" style="font-size: 0.9rem;" data-i18n="combiner.zip.filename">ZIP filename:</label>
           <input
             type="text"
             id="zipFilename"
@@ -391,14 +392,18 @@
             style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; width: 180px;"
           />
         </div>
-        <button id="downloadAllBtn">Download All PDFs</button>
-        <button id="downloadZipBtn">Download as ZIP</button>
+        <button id="downloadAllBtn" data-i18n="combiner.download.all">Download All PDFs</button>
+        <button id="downloadZipBtn" data-i18n="combiner.download.zip">Download as ZIP</button>
       </div>
     </div>
 
     <div id="pdfsList"></div>
   </div>
 
+  <script type="module">
+    import { initI18n } from '../../i18n.js';
+    initI18n();
+  </script>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

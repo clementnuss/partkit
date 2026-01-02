@@ -4,6 +4,7 @@
 
 import { loadPDF } from './pdf-processor.js';
 import { analyzePDF, generateSplitPDFs } from './pdf-splitter.js';
+import { t } from '../../../i18n.js';
 
 // State
 let currentPDF = null;
@@ -168,8 +169,8 @@ function displayPreview() {
             data-split-index="${index}"
             placeholder="Instrument name"
           />
-          <button class="btn-small btn-secondary btn-download-single" onclick="window.downloadSingle(${index})" title="Download this part">
-            Download
+          <button class="btn-small btn-secondary btn-download-single" onclick="window.downloadSingle(${index})" title="${t('common.download')}">
+            ${t('common.download')}
           </button>
         </div>
         <div class="split-pages">${pageRange} (${pageCount} ${pageLabel})</div>
@@ -179,32 +180,32 @@ function displayPreview() {
           class="btn-small btn-merge"
           onclick="window.mergeWithPrevious(${index})"
           ${isFirst ? 'disabled' : ''}
-          title="Merge with previous split"
+          title="${t('splitter.merge.up')}"
         >
-          ↑ Merge Up
+          ↑ ${t('splitter.merge.up')}
         </button>
         <button
           class="btn-small btn-merge"
           onclick="window.mergeWithNext(${index})"
           ${isLast ? 'disabled' : ''}
-          title="Merge with next split"
+          title="${t('splitter.merge.down')}"
         >
-          ↓ Merge Down
+          ↓ ${t('splitter.merge.down')}
         </button>
         <button
           class="btn-small btn-split"
           onclick="window.splitPages(${index})"
           ${!canSplit ? 'disabled' : ''}
-          title="Split into individual pages"
+          title="${t('splitter.split.pages')}"
         >
-          ✂ Split Pages
+          ✂ ${t('splitter.split.pages')}
         </button>
         <button
           class="btn-small btn-delete"
           onclick="window.deleteSplit(${index})"
-          title="Delete this split"
+          title="${t('splitter.delete')}"
         >
-          🗑 Delete
+          🗑 ${t('splitter.delete')}
         </button>
       </div>
     `;

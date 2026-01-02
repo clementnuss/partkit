@@ -198,16 +198,16 @@
 </head>
 <body>
   <header>
-    <a href="../../index.html" class="back-button">← Back to Home</a>
-    <h1>PDF Merger</h1>
-    <p class="subtitle">Merge one PDF (e.g., lyrics) with all other PDFs (e.g., instrument parts)</p>
+    <a href="../../index.html" class="back-button" data-i18n="common.back">← Back to Home</a>
+    <h1 data-i18n="tool.merger.name">PDF Merger</h1>
+    <p class="subtitle" data-i18n="tool.merger.desc">Merge one PDF (e.g., lyrics) with all other PDFs (e.g., instrument parts)</p>
   </header>
 
   <div class="upload-section">
-    <div class="section-title">Step 1: Upload the common PDF (lyrics, etc.)</div>
+    <div class="section-title" data-i18n="merger.step1.title">Step 1: Upload the common PDF (lyrics, etc.)</div>
     <div class="upload-area" id="commonUploadArea">
       <div class="upload-icon">📄</div>
-      <p><strong>Drop common PDF here</strong> or click to browse</p>
+      <p><strong data-i18n="merger.step1.subtitle">Drop common PDF here</strong> <span data-i18n="combiner.upload.browse">or click to browse</span></p>
       <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
         This PDF will be added to all other PDFs
       </p>
@@ -217,10 +217,10 @@
   </div>
 
   <div class="upload-section">
-    <div class="section-title">Step 2: Upload the PDFs to merge with (or a ZIP file)</div>
+    <div class="section-title" data-i18n="merger.step2.title">Step 2: Upload the PDFs to merge with (or a ZIP file)</div>
     <div class="upload-area" id="partsUploadArea">
       <div class="upload-icon">📑</div>
-      <p><strong>Drop PDF files or ZIP here</strong> or click to browse</p>
+      <p><strong data-i18n="merger.step2.subtitle">Drop PDF files or ZIP here</strong> <span data-i18n="combiner.upload.browse">or click to browse</span></p>
       <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
         Upload multiple PDF files or a ZIP containing PDFs
       </p>
@@ -232,21 +232,25 @@
 
   <div class="processing" id="processing">
     <div class="spinner"></div>
-    <p>Merging PDFs...</p>
+    <p data-i18n="common.processing">Merging PDFs...</p>
   </div>
 
   <div class="preview-section" id="previewSection">
-    <h2>Merged PDFs Ready</h2>
+    <h2 data-i18n="merger.preview.title">Merged PDFs Ready</h2>
     <div class="file-info">
       <p><strong id="mergedCount">0</strong> PDFs merged successfully!</p>
     </div>
 
     <div class="download-buttons">
-      <button id="downloadAllBtn">Download All PDFs</button>
-      <button id="downloadZipBtn">Download as ZIP</button>
+      <button id="downloadAllBtn" data-i18n="merger.download.all">Download All PDFs</button>
+      <button id="downloadZipBtn" data-i18n="merger.download.zip">Download as ZIP</button>
     </div>
   </div>
 
+  <script type="module">
+    import { initI18n } from '../../i18n.js';
+    initI18n();
+  </script>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

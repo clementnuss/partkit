@@ -332,16 +332,16 @@
 </head>
 <body>
   <header>
-    <a href="../../index.html" class="back-button">← Back to Home</a>
-    <h1>PDF Assembler</h1>
-    <p class="subtitle">Combine all instrument parts into one master PDF with configurable replicas</p>
+    <a href="../../index.html" class="back-button" data-i18n="common.back">← Back to Home</a>
+    <h1 data-i18n="tool.assembler.name">PDF Assembler</h1>
+    <p class="subtitle" data-i18n="tool.assembler.desc">Combine all instrument parts into one master PDF with configurable replicas</p>
   </header>
 
   <div class="upload-section">
     <div class="upload-area" id="uploadArea">
       <div class="upload-icon">📚</div>
-      <p><strong>Drop PDF files or ZIP here</strong> or click to browse</p>
-      <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+      <p><strong data-i18n="assembler.upload.title">Drop PDF files or ZIP here</strong> <span data-i18n="assembler.upload.browse">or click to browse</span></p>
+      <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;" data-i18n="assembler.upload.subtitle">
         Upload multiple PDF files or a ZIP containing PDFs
       </p>
       <input type="file" id="fileInput" accept=".pdf,.zip" multiple>
@@ -352,31 +352,36 @@
 
   <div class="processing" id="processing">
     <div class="spinner"></div>
-    <p>Loading PDFs...</p>
+    <p data-i18n="common.processing">Loading PDFs...</p>
   </div>
 
   <div class="preview-section" id="previewSection">
-    <h2>Configure Parts</h2>
-    <p style="color: #666; margin-bottom: 1rem;">Set the number of copies for each part. The final PDF will contain all parts in the order shown below.</p>
+    <h2 data-i18n="assembler.configure.title">Configure Parts</h2>
+    <p style="color: #666; margin-bottom: 1rem;" data-i18n="assembler.configure.subtitle">Set the number of copies for each part. The final PDF will contain all parts in the order shown below.</p>
 
     <div class="download-section" style="margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 2px solid #e0e0e0;">
       <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1rem;">
-        <label for="outputFilename" style="font-size: 0.9rem;">Output filename:</label>
+        <label for="outputFilename" style="font-size: 0.9rem;" data-i18n="assembler.filename.label">Output filename:</label>
         <input
           type="text"
           id="outputFilename"
           placeholder="assembled-parts"
+          data-i18n="assembler.filename.placeholder"
           style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; width: 250px;"
         />
         <span style="font-size: 0.9rem; color: #666;">.pdf</span>
       </div>
-      <button id="assembleBtn">Assemble & Download PDF</button>
+      <button id="assembleBtn" data-i18n="assembler.assemble">Assemble & Download PDF</button>
       <div class="total-pages" id="totalPages" style="margin-top: 1rem;">Total: 0 pages</div>
     </div>
 
     <div class="pdf-list" id="pdfList"></div>
   </div>
 
+  <script type="module">
+    import { initI18n } from '../../i18n.js';
+    initI18n();
+  </script>
   <script type="module" src="./src/main.js"></script>
 </body>
 </html>

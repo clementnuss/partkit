@@ -166,7 +166,7 @@ const translations = {
     'tool.merger.name': 'Fusionneur PDF',
     'tool.merger.desc': 'Fusionne un PDF commun (par ex. paroles) avec toutes les parties instrumentales.',
     'tool.assembler.name': 'Assembleur PDF',
-    'tool.assembler.desc': 'Combine toutes les parties en un PDF maître avec des répliques configurables.',
+    'tool.assembler.desc': 'Combine toutes les parties en un seul PDF avec un nombre de copies par instrument configurable.',
 
     // Common
     'common.back': 'Retour à l\'accueil',
@@ -284,10 +284,12 @@ function updatePageTranslations() {
     const translation = t(key);
 
     // Update based on element type
-    if (el.tagName === 'INPUT' && el.placeholder !== undefined) {
+    if (el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
       el.placeholder = translation;
-    } else if (el.tagName === 'INPUT' && el.value !== undefined && el.type !== 'text') {
+    } else if (el.tagName === 'INPUT' && el.type === 'button') {
       el.value = translation;
+    } else if (el.tagName === 'BUTTON') {
+      el.textContent = translation;
     } else {
       el.textContent = translation;
     }

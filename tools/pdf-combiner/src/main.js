@@ -4,6 +4,7 @@
 
 import { loadPDF, getPageThumbnail } from './pdf-processor.js';
 import { combinePDFPages, calculatePairings } from './pdf-combiner.js';
+import { t } from '../../../i18n.js';
 
 // State
 let uploadedPDFs = []; // {name, pdfDoc, file, firstPageAlone, pairings, combinedPDF}
@@ -173,7 +174,7 @@ function displayPreview() {
     pdfItem.className = 'pdf-item';
 
     const toggleClass = pdf.firstPageAlone ? 'active' : '';
-    const toggleText = pdf.firstPageAlone ? '✓ First page alone' : 'First page alone';
+    const toggleText = pdf.firstPageAlone ? '✓ ' + t('combiner.first.alone') : t('combiner.first.alone');
 
     pdfItem.innerHTML = `
       <div class="pdf-header">
@@ -189,7 +190,7 @@ function displayPreview() {
             class="btn-small"
             onclick="window.downloadSingle(${index})"
           >
-            Download
+            ${t('common.download')}
           </button>
         </div>
       </div>
