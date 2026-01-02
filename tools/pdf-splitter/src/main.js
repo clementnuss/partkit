@@ -88,8 +88,22 @@ async function processPDF(file) {
     // Load PDF
     currentPDF = await loadPDF(file);
 
-    // Analyze and detect instruments
-    detectedSplits = await analyzePDF(currentPDF);
+    // Analyze and detect instruments with progress callback
+    const progressCallback = ({ useOCR, currentPage, total }) => {
+      const processingEl = document.querySelector('#processing p');
+      if (useOCR && currentPage) {
+        processingEl.textContent = `Using OCR to detect instruments... Page ${currentPage} of ${total}`;
+      } else if (useOCR) {
+        processingEl.textContent = `No text layer detected. Preparing OCR...`;
+      } else {
+        processingEl.textContent = 'Processing PDF and detecting instruments...';
+      }
+    };
+
+    detectedSplits = await analyzePDF(currentPDF, progressCallback);
+
+    // Update message for PDF generation
+    document.querySelector('#processing p').textContent = 'Generating split PDFs...';
 
     // Generate split PDFs
     generatedPDFs = await generateSplitPDFs(file, detectedSplits);

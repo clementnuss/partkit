@@ -30,47 +30,58 @@ export function detectInstrument(text) {
     .replace(/\blst\b/gi, '1st')   // "lst Baritone" → "1st Baritone"
     .replace(/\bznd\b/gi, '2nd')   // "znd Horn" → "2nd Horn"
     .replace(/\bIst\b/g, '1st')    // "Ist" → "1st"
-    .replace(/\bLst\b/g, '1st');   // "Lst" → "1st"
+    .replace(/\bLst\b/g, '1st')    // "Lst" → "1st"
+    .replace(/ü/g, 'u')            // "Flügelhorn" → "Flugelhorn"
+    .replace(/ö/g, 'o')            // Handle other umlauts
+    .replace(/ä/g, 'a');           // Handle other umlauts
 
-  // Look for instrument name - can be at start OR after "Written for..." etc.
-  const firstPart = cleanText.substring(0, 100);
+  // Look for instrument name anywhere in the text
+  const firstPart = cleanText.substring(0, 200);
 
-  // Pattern 1: Instrument name at the start (most common)
-  // "1st Euphonium Written for..."
-  let instrumentPattern = /^([\d\w]+(?:st|nd|rd|th)?\s+)?([A-Za-z]+(?:\s+[A-Za-z]+)?)\s*(?:\d+|I{1,4}|IV)?\s*(?:Written|for|Funk|$)/i;
-  let match = firstPart.match(instrumentPattern);
+  // Strategy: Search for instrument keywords anywhere in the text
+  const instrumentKeywords = /soprano|cornet|horn|baritone|trombone|euphonium|bass|tuba|percussion|timpani|flugel|repiano/i;
 
-  // Pattern 2: Instrument name after "Written for..." or "Championships"
-  // "Written for Hammonds Band for the 43rd Brass In Concert Championships 2nd Cornet Better"
-  if (!match) {
-    instrumentPattern = /(?:Championships|Concert)\s+([\d\w]+(?:st|nd|rd|th)?\s+)?([A-Za-z]+(?:\s+[A-Za-z]+)?)\s*(?:\d+|I{1,4}|IV)?\s+(?:Better|Written|Liam)/i;
-    match = firstPart.match(instrumentPattern);
-  }
+  // Split into lines and search each line
+  const lines = firstPart.split('\n').map(l => l.trim());
 
-  if (match) {
-    // Extract the matched instrument name
-    let extracted = match[0]
-      .replace(/\s*(Written|for|Funk|Better|Championships|Concert|Liam).*/, '')
-      .replace(/^(Championships|Concert)\s+/, '')
-      .trim();
+  for (const line of lines) {
+    if (instrumentKeywords.test(line)) {
+      // Found a line with an instrument keyword
+      // Extract the instrument part from this line
 
-    // Clean up the extracted text
-    if (extracted.length > 2 && extracted.length < 30) {
-      // First try exact match
-      const normalizedExtracted = normalizeInstrumentName(extracted);
-      const exactMatch = BRASS_BAND_INSTRUMENTS.find(
-        instrument => normalizeInstrumentName(instrument) === normalizedExtracted
-      );
+      // Try to extract instrument name with optional prefix (Eb, Bb, 1st, etc.)
+      const patterns = [
+        // "Eb Soprano" or "Bb Solo Cornets"
+        /([A-Z]b\s+)?(\d+(?:st|nd|rd|th)\s+)?([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i,
+        // Just the instrument
+        /(\d+(?:st|nd|rd|th)\s+)?([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/i
+      ];
 
-      if (exactMatch) {
-        return exactMatch;
-      }
+      for (const pattern of patterns) {
+        const match = line.match(pattern);
+        if (match && instrumentKeywords.test(match[0])) {
+          // Extract the full match and clean it up
+          let extracted = match[0]
+            .replace(/\s*(Written|for|Funk|Better|Championships|Concert|Liam|Arranged|Pat|Metheny).*/, '')
+            .trim();
 
-      // Check if it contains instrument keywords (including flugel)
-      const instrumentKeywords = /cornet|horn|baritone|trombone|euphonium|bass|tuba|percussion|timpani|flugel/i;
-      if (instrumentKeywords.test(extracted)) {
-        // Clean up multiple whitespaces before returning
-        return extracted.replace(/\s+/g, ' ').trim();
+          if (extracted.length > 2 && extracted.length < 40) {
+            // First try exact match
+            const normalizedExtracted = normalizeInstrumentName(extracted);
+            const exactMatch = BRASS_BAND_INSTRUMENTS.find(
+              instrument => normalizeInstrumentName(instrument) === normalizedExtracted
+            );
+
+            if (exactMatch) {
+              return exactMatch;
+            }
+
+            // Return the extracted name if it contains an instrument keyword
+            if (instrumentKeywords.test(extracted)) {
+              return extracted.replace(/\s+/g, ' ').trim();
+            }
+          }
+        }
       }
     }
   }

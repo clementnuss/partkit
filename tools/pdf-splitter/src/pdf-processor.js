@@ -188,3 +188,36 @@ export async function getPageThumbnail(page, maxWidth = 200) {
   const scale = maxWidth / viewport.width;
   return await renderPageToCanvas(page, scale);
 }
+
+/**
+ * Extract text from page using OCR (fallback when no text layer exists)
+ */
+export async function extractTextWithOCR(page) {
+  // Dynamically import Tesseract.js
+  const { createWorker } = await import('https://cdn.jsdelivr.net/npm/tesseract.js@5/+esm');
+
+  // Render page to canvas at higher resolution for better OCR
+  const canvas = await renderPageToCanvas(page, 2.0);
+
+  // Crop to top portion only (where instrument names are)
+  const viewport = page.getViewport({ scale: 2.0 });
+  const cropCanvas = document.createElement('canvas');
+  const cropCtx = cropCanvas.getContext('2d');
+
+  // Crop to top 15% of page
+  const cropHeight = Math.floor(viewport.height * 0.15);
+  cropCanvas.width = viewport.width;
+  cropCanvas.height = cropHeight;
+
+  cropCtx.drawImage(canvas, 0, 0);
+
+  // Initialize Tesseract worker
+  const worker = await createWorker('eng');
+
+  try {
+    const { data: { text } } = await worker.recognize(cropCanvas);
+    return text.trim();
+  } finally {
+    await worker.terminate();
+  }
+}

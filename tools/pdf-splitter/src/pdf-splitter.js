@@ -3,30 +3,58 @@
  */
 
 import { PDFDocument } from 'pdf-lib';
-import { extractInstrumentNameFromPage } from './pdf-processor.js';
+import { extractInstrumentNameFromPage, extractTextWithOCR } from './pdf-processor.js';
 import { detectInstrument, sanitizeInstrumentName } from './instrument-detector.js';
 
 /**
  * Analyze a PDF and detect instrument splits
  * @param {PDFDocumentProxy} pdfDoc - PDF.js document
+ * @param {Function} progressCallback - Optional callback for OCR progress
  * @returns {Promise<Array>} Array of splits: [{instrument, startPage, endPage, pages: []}]
  */
-export async function analyzePDF(pdfDoc) {
+export async function analyzePDF(pdfDoc, progressCallback = null) {
   const splits = [];
   let currentInstrument = null;
   let currentSplit = null;
+  let useOCR = false;
+
+  // Check first page to see if we need OCR
+  const firstPage = await pdfDoc.getPage(1);
+  const firstPageText = await extractInstrumentNameFromPage(firstPage);
+  const firstDetection = detectInstrument(firstPageText);
+
+  if (!firstDetection || firstPageText.length < 3) {
+    // No text found or very little text - enable OCR
+    useOCR = true;
+    if (progressCallback) {
+      progressCallback({ useOCR: true, total: pdfDoc.numPages });
+    }
+  }
 
   for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
     const page = await pdfDoc.getPage(pageNum);
-    const text = await extractInstrumentNameFromPage(page);
+
+    if (progressCallback) {
+      progressCallback({ currentPage: pageNum, total: pdfDoc.numPages, useOCR });
+    }
+
+    let text;
+    if (useOCR) {
+      text = await extractTextWithOCR(page);
+    } else {
+      text = await extractInstrumentNameFromPage(page);
+    }
+
     const detectedInstrument = detectInstrument(text);
 
     // Debug logging - show all pages
-    // if (detectedInstrument) {
-    //   console.log(`📄 Page ${pageNum}: ✓ "${detectedInstrument}"`);
-    // } else {
-    //   console.log(`📄 Page ${pageNum}: ✗ No instrument (extracted: "${text}")`);
-    // }
+    if (useOCR) {
+      if (detectedInstrument) {
+        console.log(`📄 Page ${pageNum} (OCR): ✓ "${detectedInstrument}" from: "${text}"`);
+      } else {
+        console.log(`📄 Page ${pageNum} (OCR): ✗ No instrument (OCR text: "${text}")`);
+      }
+    }
 
     // Decision logic:
     // 1. If we detect an instrument name, ALWAYS start a new split (even if same as current)
