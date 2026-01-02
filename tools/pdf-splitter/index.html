@@ -25,6 +25,24 @@
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: #666;
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .back-button:hover {
+      background: #555;
     }
 
     h1 {
@@ -304,6 +322,7 @@
 </head>
 <body>
   <header>
+    <a href="../../index.html" class="back-button">← Back to Home</a>
     <h1>Music PDF Toolkit</h1>
     <p class="subtitle">Split brass band sheet music PDFs by instrument</p>
   </header>
