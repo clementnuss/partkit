@@ -3,23 +3,40 @@
  */
 
 import Fuse from 'fuse.js';
-import { BRASS_BAND_INSTRUMENTS, normalizeInstrumentName } from './instruments.js';
+import { INSTRUMENT_SETS, normalizeInstrumentName } from './instruments.js';
 
-// Configure fuzzy search
-const fuse = new Fuse(BRASS_BAND_INSTRUMENTS, {
-  threshold: 0.3, // 0 = perfect match, 1 = match anything
-  distance: 100,
-  ignoreLocation: true,
-  keys: ['name'],
-  getFn: (obj) => normalizeInstrumentName(obj)
-});
+// Cache fuzzy search instances for each instrument set
+const fuseCache = {};
+
+/**
+ * Get or create a Fuse instance for a specific instrument set
+ */
+function getFuseForSet(instrumentSetKey) {
+  if (!fuseCache[instrumentSetKey]) {
+    const instrumentSet = INSTRUMENT_SETS[instrumentSetKey];
+    fuseCache[instrumentSetKey] = new Fuse(instrumentSet.instruments, {
+      threshold: 0.3, // 0 = perfect match, 1 = match anything
+      distance: 100,
+      ignoreLocation: true,
+      keys: ['name'],
+      getFn: (obj) => normalizeInstrumentName(obj)
+    });
+  }
+  return fuseCache[instrumentSetKey];
+}
 
 /**
  * Detect instrument name from extracted text
  * @param {string} text - Text extracted from page
+ * @param {string} instrumentSetKey - Key for instrument set (e.g., 'brass-band', 'wind-band')
  * @returns {string|null} Detected instrument name or null
  */
-export function detectInstrument(text) {
+export function detectInstrument(text, instrumentSetKey = 'brass-band') {
+  const instrumentSet = INSTRUMENT_SETS[instrumentSetKey];
+  if (!instrumentSet) {
+    console.error(`Unknown instrument set: ${instrumentSetKey}`);
+    return null;
+  }
   if (!text || text.trim().length === 0) {
     return null;
   }
@@ -39,7 +56,7 @@ export function detectInstrument(text) {
   const firstPart = cleanText.substring(0, 200);
 
   // Strategy: Search for instrument keywords anywhere in the text
-  const instrumentKeywords = /soprano|cornet|horn|baritone|trombone|euphonium|bass|tuba|percussion|timpani|flugel|repiano/i;
+  const instrumentKeywords = instrumentSet.keywords;
 
   // Split into lines and search each line
   const lines = firstPart.split('\n').map(l => l.trim());
@@ -68,7 +85,7 @@ export function detectInstrument(text) {
           if (extracted.length > 2 && extracted.length < 40) {
             // First try exact match
             const normalizedExtracted = normalizeInstrumentName(extracted);
-            const exactMatch = BRASS_BAND_INSTRUMENTS.find(
+            const exactMatch = instrumentSet.instruments.find(
               instrument => normalizeInstrumentName(instrument) === normalizedExtracted
             );
 

@@ -333,10 +333,23 @@
   <header>
     <a href="../../index.html" class="back-button" data-i18n="common.back">← Back to Home</a>
     <h1 data-i18n="main.title">PartKit</h1>
-    <p class="subtitle" data-i18n="main.subtitle">Split brass band sheet music PDFs by instrument</p>
+    <p class="subtitle" data-i18n="main.subtitle">Split brass band and wind band sheet music PDFs by instrument</p>
   </header>
 
   <div class="upload-section">
+    <div style="margin-bottom: 1.5rem;">
+      <label for="ensembleType" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">
+        Ensemble Type:
+      </label>
+      <select
+        id="ensembleType"
+        style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; min-width: 250px;"
+      >
+        <option value="brass-band">Brass Band</option>
+        <option value="wind-band">Wind Band / Concert Band</option>
+      </select>
+    </div>
+
     <div class="upload-area" id="uploadArea">
       <div class="upload-icon">📄</div>
       <p><strong data-i18n="splitter.upload.title">Drop your PDF here</strong> <span data-i18n="splitter.upload.browse">or click to browse</span></p>

@@ -10,9 +10,10 @@ import { detectInstrument, sanitizeInstrumentName } from './instrument-detector.
  * Analyze a PDF and detect instrument splits
  * @param {PDFDocumentProxy} pdfDoc - PDF.js document
  * @param {Function} progressCallback - Optional callback for OCR progress
+ * @param {string} instrumentSetKey - Key for instrument set (e.g., 'brass-band', 'wind-band')
  * @returns {Promise<Array>} Array of splits: [{instrument, startPage, endPage, pages: []}]
  */
-export async function analyzePDF(pdfDoc, progressCallback = null) {
+export async function analyzePDF(pdfDoc, progressCallback = null, instrumentSetKey = 'brass-band') {
   const splits = [];
   let currentInstrument = null;
   let currentSplit = null;
@@ -21,7 +22,7 @@ export async function analyzePDF(pdfDoc, progressCallback = null) {
   // Check first page to see if we need OCR
   const firstPage = await pdfDoc.getPage(1);
   const firstPageText = await extractInstrumentNameFromPage(firstPage);
-  const firstDetection = detectInstrument(firstPageText);
+  const firstDetection = detectInstrument(firstPageText, instrumentSetKey);
 
   if (!firstDetection || firstPageText.length < 3) {
     // No text found or very little text - enable OCR
@@ -45,7 +46,7 @@ export async function analyzePDF(pdfDoc, progressCallback = null) {
       text = await extractInstrumentNameFromPage(page);
     }
 
-    const detectedInstrument = detectInstrument(text);
+    const detectedInstrument = detectInstrument(text, instrumentSetKey);
 
     // Debug logging - show all pages
     if (useOCR) {

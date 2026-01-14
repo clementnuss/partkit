@@ -24,6 +24,7 @@ const downloadAllBtn = document.getElementById('downloadAllBtn');
 const downloadZipBtn = document.getElementById('downloadZipBtn');
 const errorMessage = document.getElementById('errorMessage');
 const baseFilenameInput = document.getElementById('baseFilename');
+const ensembleTypeSelect = document.getElementById('ensembleType');
 
 // Setup event listeners
 uploadArea.addEventListener('click', () => fileInput.click());
@@ -103,7 +104,10 @@ async function processPDF(file) {
       }
     };
 
-    detectedSplits = await analyzePDF(currentPDF, progressCallback);
+    // Get selected ensemble type
+    const instrumentSetKey = ensembleTypeSelect.value || 'brass-band';
+
+    detectedSplits = await analyzePDF(currentPDF, progressCallback, instrumentSetKey);
 
     // Update message for PDF generation
     document.querySelector('#processing p').textContent = 'Generating split PDFs...';
